@@ -1,0 +1,435 @@
+-- Product Purchase Faker (macOS Terminal Edition + Original Logic Restore + Username Title)
+-- Title changed to Player Username
+-- Made by esore 2026
+
+local TweenService = game:GetService("TweenService")
+local Players = game:GetService("Players")
+
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+ScreenGui.Parent = game:GetService("CoreGui")
+ScreenGui.Name = "TerminalGUI"
+
+-- UI SETUP (macOS Terminal Style)
+local mainbg = Instance.new("Frame")
+mainbg.Name = "MainWindow"
+mainbg.Size = UDim2.new(0, 500, 0, 380)
+mainbg.Position = UDim2.new(0.5, -250, 0.5, -190)
+mainbg.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+mainbg.BorderSizePixel = 0
+mainbg.Parent = ScreenGui
+
+local WindowCorner = Instance.new("UICorner")
+WindowCorner.CornerRadius = UDim.new(0, 12)
+WindowCorner.Parent = mainbg
+
+local WindowStroke = Instance.new("UIStroke")
+WindowStroke.Color = Color3.fromRGB(50, 50, 50)
+WindowStroke.Thickness = 1
+WindowStroke.Parent = mainbg
+
+-- Title Bar
+local TitleBar = Instance.new("Frame")
+TitleBar.Name = "TitleBar"
+TitleBar.Size = UDim2.new(1, 0, 0, 30)
+TitleBar.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+TitleBar.BorderSizePixel = 0
+TitleBar.Parent = mainbg
+
+local TopCorner = Instance.new("UICorner")
+TopCorner.CornerRadius = UDim.new(0, 12)
+TopCorner.Parent = TitleBar
+
+local TopMask = Instance.new("Frame")
+TopMask.Size = UDim2.new(1, 0, 0.5, 0)
+TopMask.Position = UDim2.new(0, 0, 0.5, 0)
+TopMask.BackgroundColor3 = TitleBar.BackgroundColor3
+TopMask.BorderSizePixel = 0
+TopMask.Parent = TitleBar
+
+-- Traffic Lights
+local TLContainer = Instance.new("Frame")
+TLContainer.Size = UDim2.new(0, 60, 0, 15)
+TLContainer.Position = UDim2.new(0, 10, 0.5, -7)
+TLContainer.BackgroundTransparency = 1
+TLContainer.Parent = TitleBar
+
+local function createTrafficLight(color, x)
+    local btn = Instance.new("ImageButton")
+    btn.Size = UDim2.new(0, 12, 0, 12)
+    btn.Position = UDim2.new(0, x, 0, 0)
+    btn.BackgroundColor3 = color
+    btn.AutoButtonColor = false
+    btn.Parent = TLContainer
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(1, 0)
+    corner.Parent = btn
+    return btn
+end
+
+createTrafficLight(Color3.fromRGB(255, 95, 86), 0)
+createTrafficLight(Color3.fromRGB(255, 189, 46), 18)
+createTrafficLight(Color3.fromRGB(40, 201, 63), 36)
+
+local TitleText = Instance.new("TextLabel")
+TitleText.Size = UDim2.new(1, 0, 1, 0)
+TitleText.BackgroundTransparency = 1
+-- CHANGE: Title now shows Username instead of hardcoded name
+TitleText.Text = "root@user:~# " .. Players.LocalPlayer.Name
+TitleText.TextColor3 = Color3.fromRGB(180, 180, 180)
+TitleText.Font = Enum.Font.Code
+TitleText.TextSize = 13
+TitleText.Parent = TitleBar
+
+-- Tabs
+local TabContainer = Instance.new("Frame")
+TabContainer.Size = UDim2.new(1, 0, 0, 30)
+TabContainer.Position = UDim2.new(0, 0, 0, 30)
+TabContainer.BackgroundTransparency = 1
+TabContainer.Parent = mainbg
+
+local TabLayout = Instance.new("UIListLayout")
+TabLayout.Padding = UDim.new(0, 30)
+TabLayout.FillDirection = Enum.FillDirection.Horizontal
+TabLayout.Parent = TabContainer
+
+local function createTab(name)
+    local btn = Instance.new("TextButton")
+    btn.Name = name .. "Tab"
+    btn.Size = UDim2.new(0, 80, 0, 20)
+    btn.Position = UDim2.new(0, 15, 0, 5)
+    btn.BackgroundTransparency = 1
+    btn.Text = name
+    btn.TextColor3 = Color3.fromRGB(100, 100, 100)
+    btn.Font = Enum.Font.Code
+    btn.TextSize = 14
+    btn.Parent = TabContainer
+    return btn
+end
+
+local ListenerTab = createTab("Listener")
+local ActionTab = createTab("Action")
+
+-- Content Area
+local ContentFrame = Instance.new("Frame")
+ContentFrame.Name = "ContentFrame"
+ContentFrame.Size = UDim2.new(1, -20, 1, -70)
+ContentFrame.Position = UDim2.new(0, 10, 0, 60)
+ContentFrame.BackgroundTransparency = 1
+ContentFrame.Parent = mainbg
+
+-- --- LISTENER TAB ---
+local listenerTabFrame = Instance.new("ScrollingFrame")
+listenerTabFrame.Visible = true
+listenerTabFrame.Name = "listenerTabFrame"
+listenerTabFrame.Size = UDim2.new(1, 0, 1, 0)
+listenerTabFrame.BackgroundTransparency = 1
+listenerTabFrame.ScrollBarThickness = 6
+listenerTabFrame.ScrollBarImageColor3 = Color3.fromRGB(60, 60, 60)
+listenerTabFrame.AutomaticCanvasSize = Enum.AutomaticSize.Y
+listenerTabFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+listenerTabFrame.Parent = ContentFrame
+
+local listenerLayout = Instance.new("UIListLayout")
+listenerLayout.Padding = UDim.new(0, 5)
+listenerLayout.Parent = listenerTabFrame
+
+-- --- ACTION TAB ---
+local actionTabFrame = Instance.new("ScrollingFrame")
+actionTabFrame.Visible = false
+actionTabFrame.Name = "actionTabFrame"
+actionTabFrame.Size = UDim2.new(1, 0, 1, 0)
+actionTabFrame.BackgroundTransparency = 1
+actionTabFrame.ScrollBarThickness = 6
+actionTabFrame.ScrollBarImageColor3 = Color3.fromRGB(60, 60, 60)
+actionTabFrame.AutomaticCanvasSize = Enum.AutomaticSize.Y
+actionTabFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+actionTabFrame.Parent = ContentFrame
+
+local actionPadding = Instance.new("UIPadding")
+actionPadding.PaddingTop = UDim.new(0, 10)
+actionPadding.Parent = actionTabFrame
+
+local actionLayout = Instance.new("UIListLayout")
+actionLayout.Padding = UDim.new(0, 15)
+actionLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+actionLayout.Parent = actionTabFrame
+
+-- 1. Input Box (Terminal Style)
+local inputContainer = Instance.new("Frame")
+inputContainer.Size = UDim2.new(1, 0, 0, 35)
+inputContainer.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+inputContainer.Parent = actionTabFrame
+
+local InputCorner = Instance.new("UICorner")
+InputCorner.CornerRadius = UDim.new(0, 6)
+InputCorner.Parent = inputContainer
+
+local PromptLabel = Instance.new("TextLabel")
+PromptLabel.Size = UDim2.new(0, 30, 1, 0)
+PromptLabel.BackgroundTransparency = 1
+PromptLabel.Text = ">"
+PromptLabel.TextColor3 = Color3.fromRGB(50, 200, 50)
+PromptLabel.Font = Enum.Font.Code
+PromptLabel.TextSize = 16
+PromptLabel.TextXAlignment = Enum.TextXAlignment.Right
+PromptLabel.Parent = inputContainer
+
+local ProductIDInput = Instance.new("TextBox")
+ProductIDInput.Name = "TerminalInput"
+ProductIDInput.Size = UDim2.new(1, -40, 1, 0)
+ProductIDInput.Position = UDim2.new(0, 35, 0, 0)
+ProductIDInput.BackgroundTransparency = 1
+ProductIDInput.Text = ""
+ProductIDInput.PlaceholderText = "Enter Product ID Here..."
+ProductIDInput.PlaceholderColor3 = Color3.fromRGB(80, 80, 80)
+ProductIDInput.TextColor3 = Color3.fromRGB(200, 200, 200)
+ProductIDInput.Font = Enum.Font.Code
+ProductIDInput.TextSize = 14
+ProductIDInput.TextXAlignment = Enum.TextXAlignment.Left
+ProductIDInput.ClearTextOnFocus = false
+ProductIDInput.Parent = inputContainer
+
+-- 2. 2x2 Button Grid
+local buttonContainer = Instance.new("Frame")
+buttonContainer.Name = "ButtonContainer"
+buttonContainer.Size = UDim2.new(1, 0, 0, 110)
+buttonContainer.BackgroundTransparency = 1
+buttonContainer.Parent = actionTabFrame
+
+local buttonGrid = Instance.new("UIGridLayout")
+buttonGrid.CellSize = UDim2.new(0.5, -10, 0, 45)
+buttonGrid.CellPadding = UDim2.new(0, 5, 0, 5)
+buttonGrid.Parent = buttonContainer
+
+local function createCmdButton(text, layoutOrder)
+    local btn = Instance.new("TextButton")
+    btn.Name = "CmdBtn"
+    btn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    btn.BorderSizePixel = 0
+    btn.Text = "$ " .. text:lower()
+    btn.TextColor3 = Color3.fromRGB(220, 220, 220)
+    btn.Font = Enum.Font.Code
+    btn.TextSize = 12
+    btn.LayoutOrder = layoutOrder
+    btn.Parent = buttonContainer
+
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 4)
+    corner.Parent = btn
+
+    btn.MouseEnter:Connect(function()
+        TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(70, 70, 70)}):Play()
+    end)
+    btn.MouseLeave:Connect(function()
+        TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(50, 50, 50)}):Play()
+    end)
+    
+    return btn
+end
+
+local HookBtn = createCmdButton("Signal Product", 1)
+local GamepassBtn = createCmdButton("Signal Gamepass", 2)
+local BulkBtn = createCmdButton("Signal Bulk", 3)
+local PurchaseBtn = createCmdButton("Signal Purchase", 4)
+
+
+-- --- ORIGINAL LOGIC RESTORED BELOW ---
+
+-- Tab Switching
+local function updateTabs(activeTab)
+    if activeTab == ListenerTab then
+        ListenerTab.TextColor3 = Color3.fromRGB(255, 255, 255)
+        ActionTab.TextColor3 = Color3.fromRGB(100, 100, 100)
+        listenerTabFrame.Visible = true
+        actionTabFrame.Visible = false
+    elseif activeTab == ActionTab then
+        ActionTab.TextColor3 = Color3.fromRGB(255, 255, 255)
+        ListenerTab.TextColor3 = Color3.fromRGB(100, 100, 100)
+        actionTabFrame.Visible = true
+        listenerTabFrame.Visible = false
+    end
+end
+
+ListenerTab.MouseButton1Click:Connect(function() updateTabs(ListenerTab) end)
+ActionTab.MouseButton1Click:Connect(function() updateTabs(ActionTab) end)
+updateTabs(ActionTab)
+
+-- Original Drag Logic (Dragify)
+local UIS = game:GetService("UserInputService")
+function dragify(Frame)
+    dragToggle = nil
+    dragSpeed = 0.15
+    dragInput = nil
+    dragStart = nil
+    dragPos = nil
+    function updateInput(input)
+        Delta = input.Position - dragStart
+        Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + Delta.X, startPos.Y.Scale, startPos.Y.Offset + Delta.Y)
+        game:GetService("TweenService"):Create(Frame, TweenInfo.new(0.15), {Position = Position}):Play()
+    end
+    Frame.InputBegan:Connect(function(input)
+        if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) and UIS:GetFocusedTextBox() == nil then
+            dragToggle = true
+            dragStart = input.Position
+            startPos = Frame.Position
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragToggle = false
+                end
+            end)
+        end
+    end)
+    Frame.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+            dragInput = input
+        end
+    end)
+    game:GetService("UserInputService").InputChanged:Connect(function(input)
+        if input == dragInput and dragToggle then
+            updateInput(input)
+        end
+    end)
+end
+dragify(mainbg)
+
+-- Original Button Logic
+local MarketplaceService = game:GetService("MarketplaceService")
+
+HookBtn.MouseButton1Click:Connect(function()
+    local productID = tonumber(ProductIDInput.Text)
+    if not productID then warn("Invalid Product ID") return end
+    print("Falsely Bought product:", productID)
+    MarketplaceService:SignalPromptProductPurchaseFinished(
+        game:GetService("Players").LocalPlayer.UserId,
+        productID,
+        true
+    )
+end)
+
+GamepassBtn.MouseButton1Click:Connect(function()
+    local productID = tonumber(ProductIDInput.Text)
+    if not productID then warn("Invalid Product ID") return end
+    print("Falsely Bought product:", productID)
+    MarketplaceService:SignalPromptGamePassPurchaseFinished(
+        game:GetService("Players").LocalPlayer,
+        productID,
+        true
+    )
+end)
+
+BulkBtn.MouseButton1Click:Connect(function()
+    local productID = tonumber(ProductIDInput.Text)
+    if not productID then warn("Invalid Product ID") return end
+    print("Falsely Bought product:", productID)
+    MarketplaceService:SignalPromptBulkPurchaseFinished(
+        game:GetService("Players").LocalPlayer.UserId,
+        productID,
+        true
+    )
+end)
+
+PurchaseBtn.MouseButton1Click:Connect(function()
+    local productID = tonumber(ProductIDInput.Text)
+    if not productID then warn("Invalid Product ID") return end
+    print("Falsely Bought product:", productID)
+    MarketplaceService:SignalPromptPurchaseFinished(
+        game:GetService("Players").LocalPlayer.UserId,
+        productID,
+        true
+    )
+end)
+
+-- Original Listener Logic (addLog)
+function addLog(pName, purchasedId, wasPurchased)
+    local Response = Instance.new("Frame")
+    Response.Active = true
+    Response.Selectable = true
+    Response.BackgroundTransparency = 0
+    Response.Name = "Response"
+    Response.Size = UDim2.new(1, 0, 0, 50)
+    Response.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    Response.BorderSizePixel = 0
+    Response.BackgroundColor3 = Color3.fromRGB(30, 30, 35)
+    Response.Parent = listenerTabFrame
+
+    local UICorner = Instance.new("UICorner")
+    UICorner.CornerRadius = UDim.new(0, 8)
+    UICorner.Parent = Response
+
+    local UIStroke = Instance.new("UIStroke")
+    UIStroke.Color = Color3.fromRGB(60, 60, 70)
+    UIStroke.Parent = Response
+
+    local ProductName = Instance.new("TextLabel")
+    ProductName.TextWrapped = true
+    ProductName.Name = "ProductName"
+    ProductName.TextColor3 = Color3.fromRGB(255, 255, 255)
+    ProductName.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    ProductName.Text = pName
+    ProductName.Size = UDim2.new(1, -100, 0, 20)
+    ProductName.Position = UDim2.new(0.34, 0, 0.35, 0)
+    ProductName.AnchorPoint = Vector2.new(0.5, 0.5)
+    ProductName.BorderSizePixel = 0
+    ProductName.BackgroundTransparency = 1
+    ProductName.TextXAlignment = Enum.TextXAlignment.Left
+    ProductName.TextScaled = false
+    ProductName.Font = Enum.Font.GothamBold
+    ProductName.TextSize = 16
+    ProductName.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    ProductName.Parent = Response
+
+    local ProductID = Instance.new("TextLabel")
+    ProductID.TextWrapped = true
+    ProductID.Name = "ProductID"
+    ProductID.TextColor3 = Color3.fromRGB(255, 201, 37)
+    ProductID.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    ProductID.Text = tostring(purchasedId)
+    ProductID.Size = UDim2.new(1, -100, 0, 15)
+    ProductID.Position = UDim2.new(0.34, 0, 0.75, 0)
+    ProductID.AnchorPoint = Vector2.new(0.5, 0.5)
+    ProductID.BorderSizePixel = 0
+    ProductID.BackgroundTransparency = 1
+    ProductID.TextXAlignment = Enum.TextXAlignment.Left
+    ProductID.TextScaled = false
+    ProductID.Font = Enum.Font.Code
+    ProductID.TextSize = 14
+    ProductID.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    ProductID.Parent = Response
+
+    local CopyID = Instance.new("ImageButton")
+    CopyID.ImageTransparency = 1
+    CopyID.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    CopyID.AnchorPoint = Vector2.new(0.5, 0.5)
+    CopyID.Name = "CopyID"
+    CopyID.Position = UDim2.new(0.9, 0, 0.5, 0)
+    CopyID.Size = UDim2.new(0, 35, 0, 35)
+    CopyID.BorderSizePixel = 0
+    CopyID.BackgroundColor3 = Color3.fromRGB(50, 50, 60)
+    CopyID.Parent = Response
+
+    local UICorner_2 = Instance.new("UICorner")
+    UICorner_2.CornerRadius = UDim.new(0, 6)
+    UICorner_2.Parent = CopyID
+
+    local CopyLabel = Instance.new("TextLabel")
+    CopyLabel.Text = "Copy"
+    CopyLabel.Size = UDim2.new(1,0,1,0)
+    CopyLabel.BackgroundTransparency = 1
+    CopyLabel.TextColor3 = Color3.fromRGB(255,255,255)
+    CopyLabel.Font = Enum.Font.GothamBold
+    CopyLabel.TextSize = 12
+    CopyLabel.Parent = CopyID
+
+    CopyID.MouseButton1Click:Connect(function()
+        print("Copied!")
+        setclipboard(tostring(purchasedId))
+    end)
+end
+
+MarketplaceService.PromptProductPurchaseFinished:Connect(function(player, purchasedId, wasPurchased)
+    print("Hook triggered for product:", purchasedId)
+    print("Player:", player)
+    print("WasPurchased:", wasPurchased)
+    addLog(game:GetService("Players").LocalPlayer.Name, purchasedId, wasPurchased)
+end)
